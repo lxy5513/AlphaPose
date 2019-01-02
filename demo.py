@@ -44,13 +44,13 @@ if __name__ == "__main__":
     # Load input images
     data_loader = ImageLoader(im_names, batchSize=args.detbatch, format='yolo').start()
 
-    # Load detection loader
+    # Load detection loader 先找到人
     print('Loading YOLO model..')
     sys.stdout.flush()
     det_loader = DetectionLoader(data_loader, batchSize=args.detbatch).start()
     det_processor = DetectionProcessor(det_loader).start()
     
-    # Load pose model
+    # Load pose model 再找出人对应的姿态
     pose_dataset = Mscoco()
     if args.fast_inference:
         pose_model = InferenNet_fast(4 * 1 + 1, pose_dataset)

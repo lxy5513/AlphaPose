@@ -20,8 +20,6 @@ import time
 from fn import getTime
 import cv2
 
-import ipdb;pdb = ipdb.set_trace
-
 from pPose_nms import pose_nms, write_json
 
 args = opt
@@ -30,8 +28,8 @@ if not args.sp:
     torch.multiprocessing.set_start_method('forkserver', force=True)
     torch.multiprocessing.set_sharing_strategy('file_system')
 
-if __name__ == "__main__":
-    videofile = args.video
+def get_det_processor(file_name):
+    videofile = file_name
     mode = args.mode
     if not os.path.exists(args.outputpath):
         os.mkdir(args.outputpath)
@@ -43,7 +41,27 @@ if __name__ == "__main__":
     data_loader = VideoLoader(videofile, batchSize=args.detbatch).start()
     (fourcc,fps,frameSize) = data_loader.videoinfo()
 
-    print('the video is {} f/s'.format(fps))
+    # Load detection loader
+    print('Loading YOLO model..')
+    sys.stdout.flush()
+    det_loader = DetectionLoader(data_loader, batchSize=args.detbatch).start()
+    det_processor = DetectionProcessor(det_loader).start()
+    return det_processor
+
+
+def main(file_name):
+    #  videofile = args.video
+    videofile = file_name
+    mode = args.mode
+    if not os.path.exists(args.outputpath):
+        os.mkdir(args.outputpath)
+
+    if not len(videofile):
+        raise IOError('Error: must contain --video')
+
+    # Load input video
+    data_loader = VideoLoader(videofile, batchSize=args.detbatch).start()
+    (fourcc,fps,frameSize) = data_loader.videoinfo()
 
     # Load detection loader
     print('Loading YOLO model..')
@@ -109,7 +127,7 @@ if __name__ == "__main__":
         if args.profile:
             # TQDM
             im_names_desc.set_description(
-            'det time: {dt:.3f} | pose time: {pt:.2f} | post processing: {pn:.4f}'.format(
+            'det time: {dt:.4f} | pose time: {pt:.4f} | post processing: {pn:.4f}'.format(
                 dt=np.mean(runtime_profile['dt']), pt=np.mean(runtime_profile['pt']), pn=np.mean(runtime_profile['pn']))
             )
 
@@ -122,3 +140,16 @@ if __name__ == "__main__":
     writer.stop()
     final_result = writer.results()
     write_json(final_result, args.outputpath)
+
+if __name__ == "__main__":
+    videodir = args.video
+    names = next(os.walk(videodir))[-1]
+
+    #  video = os.path.join(videodir, names[0])
+    #  det_processor = get_det_processor(video)
+
+    for item in names:
+        print('---------------------------------------------------> process video ', item)
+        video = os.path.join(videodir, item)
+        main(video)
+

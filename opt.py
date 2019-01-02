@@ -20,7 +20,8 @@ parser.add_argument('--addDPG', default=False, type=bool,
                     help='Train with data augmentation')
 parser.add_argument('--sp', default=False, action='store_true',
                     help='Use single process for pytorch')
-parser.add_argument('--profile', default=False, action='store_true',
+# speed profile change to true
+parser.add_argument('--profile', default=True, action='store_true',
                     help='add speed profiling at screen output')
 
 "----------------------------- Model options -----------------------------"
@@ -111,6 +112,7 @@ parser.add_argument('--indir', dest='inputpath',
                     help='image-directory', default="")
 parser.add_argument('--list', dest='inputlist',
                     help='image-list', default="")
+# speed
 parser.add_argument('--mode', dest='mode',
                     help='detection mode, fast/normal/accurate', default="normal")
 parser.add_argument('--outdir', dest='outputpath',
@@ -121,6 +123,8 @@ parser.add_argument('--conf', dest='confidence', type=float, default=0.05,
                     help='bounding box confidence threshold')
 parser.add_argument('--nms', dest='nms_thesh', type=float, default=0.6,
                     help='bounding box nms threshold')
+
+# save img
 parser.add_argument('--save_img', default=False, action='store_true',
                     help='save result as image')
 parser.add_argument('--vis', default=False, action='store_true',
@@ -137,6 +141,7 @@ parser.add_argument('--video', dest='video',
                     help='video-name', default="")
 parser.add_argument('--webcam', dest='webcam', type=str,
                     help='webcam number', default='0')
+# save videos
 parser.add_argument('--save_video', dest='save_video',
                     help='whether to save rendered video', default=False, action='store_true')
 parser.add_argument('--vis_fast', dest='vis_fast',

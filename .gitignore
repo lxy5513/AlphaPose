@@ -22,3 +22,8 @@ images
 *.weights
 
 coco-minival/
+
+*.mp4 
+*.avi 
+videos/ 
+

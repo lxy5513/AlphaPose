@@ -48,7 +48,7 @@ if __name__ == "__main__":
     sys.stdout.flush()
     det_loader = DetectionLoader(data_loader, batchSize=args.detbatch).start()
     det_processor = DetectionProcessor(det_loader).start()
-    
+
     # Load pose model
     pose_dataset = Mscoco()
     if args.fast_inference:
@@ -84,7 +84,7 @@ if __name__ == "__main__":
                 ckpt_time, det_time = getTime(start_time)
                 runtime_profile['dt'].append(det_time)
                 # Pose Estimation
-                
+
                 datalen = inps.size(0)
                 leftover = 0
                 if (datalen) % batchSize:
@@ -107,7 +107,7 @@ if __name__ == "__main__":
             if args.profile:
                 # TQDM
                 im_names_desc.set_description(
-                'det time: {dt:.3f} | pose time: {pt:.2f} | post processing: {pn:.4f}'.format(
+                'det time: {dt:.4f} | pose time: {pt:.4f} | post processing: {pn:.4f}'.format(
                     dt=np.mean(runtime_profile['dt']), pt=np.mean(runtime_profile['pt']), pn=np.mean(runtime_profile['pn']))
                 )
         except KeyboardInterrupt:
